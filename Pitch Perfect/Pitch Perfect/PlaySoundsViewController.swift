@@ -22,14 +22,14 @@ class PlaySoundsViewController: UIViewController {
         super.viewDidLoad()
         
         // initiate audioPlayer
-        audioPlayer = AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl, error: nil);
+        audioPlayer = try? AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl);
         audioPlayer.enableRate = true;
         
         // initiate audioEngine
         audioEngine = AVAudioEngine()
         
         // initiate audioFile
-        audioFile = AVAudioFile(forReading: receivedAudio.filePathUrl, error: nil)
+        audioFile = try? AVAudioFile(forReading: receivedAudio.filePathUrl)
     }
 
     override func didReceiveMemoryWarning() {
@@ -61,11 +61,11 @@ class PlaySoundsViewController: UIViewController {
         stopAndResetSounds();
         
         // create new audioPlayerNode and attach to audioEngine
-        var audioPlayerNode = AVAudioPlayerNode()
+        let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
         
         // create the AVAudioUnitTimePitch variable for the pitch effect
-        var changePitchEffect = AVAudioUnitTimePitch()
+        let changePitchEffect = AVAudioUnitTimePitch()
         
         // set the pitch
         changePitchEffect.pitch = pitch
@@ -80,8 +80,13 @@ class PlaySoundsViewController: UIViewController {
         // schedule the file to be played
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
         
-        // start engine
-        audioEngine.startAndReturnError(nil)
+        do {
+            // start engine
+            // try audioEngine.startAndReturnError()
+            try audioEngine.start()
+        } catch _ {
+        
+        }
         
         // start playback
         audioPlayerNode.play()
@@ -102,11 +107,11 @@ class PlaySoundsViewController: UIViewController {
         stopAndResetSounds();
         
         // create new audioPlayerNode and attach to audioEngine
-        var audioPlayerNode = AVAudioPlayerNode()
+        let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
         
         // create the AVAudioUnitReverb variable for the reverb effect
-        var reverbEffect = AVAudioUnitReverb()
+        let reverbEffect = AVAudioUnitReverb()
         
         // set the wetDryMix property for the reverb effect
         reverbEffect.wetDryMix = 75;
@@ -120,7 +125,11 @@ class PlaySoundsViewController: UIViewController {
         
         // schedule the file to be played
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
-        audioEngine.startAndReturnError(nil)
+        do {
+            try audioEngine.start()
+        } catch _ {
+            
+        }
         
         // start playback
         audioPlayerNode.play()
@@ -131,11 +140,11 @@ class PlaySoundsViewController: UIViewController {
         stopAndResetSounds();
         
         // create new audioPlayerNode and attach to audioEngine
-        var audioPlayerNode = AVAudioPlayerNode()
+        let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
         
         // create the AVAudioUnitDistortion variable for the distortion effect
-        var distortionEffect = AVAudioUnitDistortion()
+        let distortionEffect = AVAudioUnitDistortion()
         
         // set the wetDryMix and preGain properties for the distortion effect
         distortionEffect.wetDryMix = 25;
@@ -150,7 +159,11 @@ class PlaySoundsViewController: UIViewController {
         
         // schedule the file to be played
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
-        audioEngine.startAndReturnError(nil)
+        do {
+            try audioEngine.start()
+        } catch _ {
+            
+        }
         
         // start playback
         audioPlayerNode.play()

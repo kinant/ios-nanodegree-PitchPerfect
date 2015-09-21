@@ -47,10 +47,13 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.stop();
         
         // create AVAudioSession variable
-        var audioSession = AVAudioSession.sharedInstance();
+        let audioSession = AVAudioSession.sharedInstance();
         
-        // set audio session to not active
-        audioSession.setActive(false, error: nil);
+        do {
+            // set audio session to not active
+            try audioSession.setActive(false)
+        } catch _ {
+        };
         
     }
     
@@ -83,14 +86,21 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         
         // obtain the file path
         let filePath = NSURL.fileURLWithPathComponents(pathArray)
-        println(filePath)
+        print(filePath)
         
         // create a AVAudioSession session
-        var session = AVAudioSession.sharedInstance()
-        session.setCategory(AVAudioSessionCategoryPlayAndRecord, error: nil)
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+        } catch _ {
+        }
         
         // initiate audioRecorder
-        audioRecorder = AVAudioRecorder(URL: filePath, settings: nil, error: nil)
+        do {
+            try audioRecorder = AVAudioRecorder(URL: filePath!, settings: [String:AnyObject]())
+        } catch {
+        
+        }
         
         // set the delegate
         audioRecorder.delegate = self
@@ -125,12 +135,12 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         
     }
     
-    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
+    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         
         if(flag){
             
             // save recorded audio
-            recordedAudio = RecordedAudio(path: recorder.url, title: recorder.url.lastPathComponent);
+            recordedAudio = RecordedAudio(path: recorder.url, title: recorder.url.lastPathComponent!);
         
             // move to the next scene (aka perform segue)
             self.performSegueWithIdentifier("stopRecording", sender: recordedAudio)
@@ -141,10 +151,10 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         // go to the next scene
         if(segue.identifier == "stopRecording"){
             // set the variable for the destination view controller, in this case the playSounds VC
-            let playSoundsVC:PlaySoundsViewController = segue.destinationViewController as PlaySoundsViewController;
+            let playSoundsVC:PlaySoundsViewController = segue.destinationViewController as! PlaySoundsViewController;
             
             // set the data from the recorded audio
-            let data = sender as RecordedAudio;
+            let data = sender as! RecordedAudio;
             
             // pass data into the next scene
             playSoundsVC.receivedAudio = data;
